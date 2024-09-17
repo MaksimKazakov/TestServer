@@ -20,6 +20,7 @@ public class TestTrast {
         Configuration.remote = "http://147.45.153.130:4444/wd/hub"; // Обратите внимание на http://
         Configuration.browser = "chrome"; // Укажите нужный браузер
         Configuration.browserSize = "1920x1080"; // Размер окна браузера
+
     }
 
     @Test
@@ -34,6 +35,7 @@ public class TestTrast {
     @DisplayName("Secondary test")
     @Step("Test 2")
     void firstTest() {
+        int result = getResult();
         System.out.println("###      firstTest()");
         Assertions.assertTrue(result > 2);
     }
@@ -44,7 +46,7 @@ public class TestTrast {
     void secondTest() {
         int result = getResult();
         System.out.println("###      secondTest()");
-        Assertions.assertTrue(result > 2);
+        Assertions.assertTrue(result> 2);
     }
 
     @AfterEach
