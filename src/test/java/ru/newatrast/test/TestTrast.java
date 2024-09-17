@@ -1,11 +1,9 @@
 package ru.newatrast.test;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
-import org.apache.logging.log4j.util.PropertySource;
+
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
@@ -14,12 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.*;
