@@ -33,6 +33,10 @@ public class TestTrast {
             put("plugins.always_open_pdf_externally", true);
             put("plugins.plugins_disabled", new ArrayList<String>() {{
                 add("Chrome PDF Viewer");
+                chromeOptions.addArguments("--disable-gpu");
+                chromeOptions.addArguments("--headless"); // Если запускается в headless режиме
+
+
             }});
         }});
 
