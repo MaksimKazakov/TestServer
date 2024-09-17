@@ -1,5 +1,4 @@
 package ru.newatrast.test;
-
 import com.codeborne.selenide.Configuration;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
@@ -25,20 +23,13 @@ public class TestTrast {
         // Настройки ChromeOptions
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setExperimentalOption("prefs", new HashMap<String, Object>() {{
-            put("profile.default_content_settings.popups", 0);
             put("download.default_directory", "/home/selenium/Downloads");
             put("download.prompt_for_download", false);
             put("download.directory_upgrade", true);
-            put("safebrowsing.enabled", false);
-            put("plugins.always_open_pdf_externally", true);
-            put("plugins.plugins_disabled", new ArrayList<String>() {{
-                add("Chrome PDF Viewer");
-                chromeOptions.addArguments("--disable-gpu");
-                chromeOptions.addArguments("--headless"); // Если запускается в headless режиме
-
-
-            }});
+            put("safebrowsing.enabled", true);
         }});
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--headless");
 
         // Установка конфигурации Selenide для подключения к Selenoid
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -47,10 +38,10 @@ public class TestTrast {
         Configuration.remote = "http://147.45.153.130:4444/wd/hub";
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
-        Configuration.browserCapabilities = capabilities; // Устанавливаем кастомные возможности
+        Configuration.browserCapabilities = capabilities;
     }
 
-    private final String downloadFilepath = "/home/selenium/Downloads"; // Путь к папке загрузок
+    private final String downloadFilepath = "/home/selenium/Downloads";
 
     @Test
     public void test() throws IOException {
@@ -60,9 +51,9 @@ public class TestTrast {
         $(By.xpath("//div[contains(@class,'login-form')]")).$(By.name("USER_PASSWORD")).setValue("test_b2b");
         $(By.xpath(".//button/div[text()='Войти']")).click();
         $x(".//a[@href='/user/returns']").click();
-
-        // Клик по элементу для скачивания
         $("span[data-tooltip='Скачать акт']").click();
+
+        // Ожидание загрузки
         sleep(10000); // Увеличьте время, если это необходимо
 
         // Проверка файла
@@ -83,14 +74,9 @@ public class TestTrast {
         // Проверка наличия изображений в скачанном файле
         try (FileInputStream fis = new FileInputStream(latestFile.get().toFile());
              XWPFDocument document = new XWPFDocument(fis)) {
-
             boolean hasImage = document.getAllPictures().size() > 0;
 
-            if (hasImage) {
-                System.out.println("Документ содержит изображение.");
-            } else {
-                System.out.println("В документе изображений нет.");
-            }
+            System.out.println(hasImage ? "Документ содержит изображение." : "В документе изображений нет.");
         }
     }
 }
