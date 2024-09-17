@@ -13,11 +13,11 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
 
-    private static final Map<String, Object> selenoidOptions = Map.of(
-            "enableVNC", true,
-            "enableLog", true,
-            "enableVideo", true
-    );
+//    private static final Map<String, Object> selenoidOptions = Map.of(
+//            "enableVNC", true,
+//            "enableLog", true,
+//            "enableVideo", true
+//    );
 
     static {
         // Установка конфигурации Selenide для подключения к Selenoid
@@ -26,7 +26,7 @@ public class TestTrast {
         Configuration.browserSize = "1920x1080";
 
         // Установка дополнительных selenoid options для Selenide
-        Configuration.browserCapabilities.setCapability("selenoid:options", selenoidOptions);
+       // Configuration.browserCapabilities.setCapability("selenoid:options", selenoidOptions);
     }
 
     private int getResult() {
