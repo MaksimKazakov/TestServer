@@ -1,5 +1,6 @@
 package ru.newatrast.test;
 
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import org.apache.logging.log4j.util.PropertySource;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +25,23 @@ import java.util.stream.Stream;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
+    private static final Map<String, Object> selenoidOptions = Map.of(
+            "enableVNC", true,
+            "enableLog", true,
+            "enableVideo", true
+    );
+
+    static {
+        // Установка конфигурации Selenide для подключения к Selenoid
+        Configuration.remote = "http://147.45.153.130:4444/wd/hub";
+        Configuration.browser = "chrome";
+        Configuration.browserSize = "1920x1080";
+
+        // Установка дополнительных selenoid options для Selenide
+        Configuration.browserCapabilities.setCapability("selenoid:options", selenoidOptions);
+    }
+
+
     @Test
     public void test() throws IOException {
         open("https://new.a-trast.ru");
