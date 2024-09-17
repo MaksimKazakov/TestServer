@@ -27,7 +27,7 @@ public class TestTrast {
     @Step("Open page https://new.a-trast.ru")
     public void test() {
         open("https://new.a-trast.ru");
-        sleep(5000);
+        sleep(15000);
     }
 
     @Test
