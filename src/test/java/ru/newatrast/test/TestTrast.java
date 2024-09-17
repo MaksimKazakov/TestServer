@@ -18,6 +18,13 @@ public class TestTrast {
 //            "enableLog", true,
 //            "enableVideo", true
 //    );
+private static final Map<String, Object> selenoidOptions = Map.of(
+        "enableVNC", true,
+        "enableLog", true,
+        "enableVideo", true,
+         "headless", true // Убираем временно для теста
+);
+
 
     static {
         // Установка конфигурации Selenide для подключения к Selenoid
