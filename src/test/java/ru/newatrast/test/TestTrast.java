@@ -1,46 +1,38 @@
 package ru.newatrast.test;
 
 import com.codeborne.selenide.Configuration;
-
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.Comparator;
-
 import java.util.Optional;
-
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
-//    private static final Map<String, Object> selenoidOptions = Map.of(
-//            "enableVNC", true,
-//            "enableLog", true,
-//            "enableVideo", true
-//    );
 
     static {
         // Установка конфигурации Selenide для подключения к Selenoid
         Configuration.remote = "http://147.45.153.130:4444/wd/hub";
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
-
-        // Установка дополнительных selenoid options для Selenide
-       // Configuration.browserCapabilities.setCapability("selenoid:options", selenoidOptions);
     }
-
 
     @Test
     public void test() throws IOException {
+        File downloadsDir = new File("build/downloads");
+        if (!downloadsDir.exists()) {
+            downloadsDir.mkdirs(); // Создаст директорию, если она отсутствует
+        }
+
         open("https://new.a-trast.ru");
         $(By.xpath(".//div[contains(text(),'Вход')]")).click();
         $(By.xpath("//div[contains(@class,'login-form')]")).$(By.name("USER_LOGIN")).setValue("bayduganova");
@@ -54,17 +46,15 @@ public class TestTrast {
         // Делаем паузу для ожидания открытия новой вкладки
         sleep(10000); // Увеличьте время, если это необходимо
 
-
         // Находим последний загруженный файл в папке build/downloads
-        Path downloadsDir = Paths.get("build/downloads");
+        Path downloadsPath = Paths.get("build/downloads");
         Optional<Path> latestFile;
 
-        try (Stream<Path> paths = Files.walk(downloadsDir)) {
+        try (Stream<Path> paths = Files.walk(downloadsPath)) {
             latestFile = paths
                     .filter(Files::isRegularFile)
                     .filter(path -> path.toString().endsWith(".docx"))
                     .max(Comparator.comparing(Path::getFileName));
-
         }
 
         if (latestFile.isEmpty()) {
@@ -83,4 +73,5 @@ public class TestTrast {
                 System.out.println("В документе изображений нет.");
             }
         }
-    }}
+    }
+}
