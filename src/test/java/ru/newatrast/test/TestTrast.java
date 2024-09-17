@@ -1,17 +1,16 @@
 package ru.newatrast.test;
-
 import com.codeborne.selenide.Configuration;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.chrome.ChromeOptions;
+import java.util.Comparator;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -20,32 +19,23 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
 
-    static {
-        // Установка конфигурации Selenide для подключения к Selenoid
-        Configuration.remote = "http://147.45.153.130:4444/wd/hub";
-        Configuration.browser = "chrome";
-        Configuration.browserSize = "1920x1080";
-        Configuration.downloadsFolder = "build/downloads"; // Установите путь загрузки
-
-        Configuration.browserCapabilities = new org.openqa.selenium.chrome.ChromeOptions() {{
-            addArguments("--no-sandbox");
-            addArguments("--disable-dev-shm-usage");
-            setExperimentalOption("prefs", new HashMap<String, Object>() {{
-                put("download.default_directory", "absolute/path/to/build/downloads"); // Прокладываем к вашему пути.
-                put("download.prompt_for_download", false);
-                put("download.directory_upgrade", true);
-                put("safebrowsing.enabled", true);
-            }});
-        }};
-    }
-
     @Test
     public void test() throws IOException {
-        File downloadsDir = new File("build/downloads");
-        if (!downloadsDir.exists()) {
-            downloadsDir.mkdirs(); // Создаст директорию, если она отсутствует
-        }
+        // Настройки для автоматического скачивания
+        String downloadFilepath = "/root/downloads";
+        HashMap<String, Object> chromePrefs = new HashMap<>();
+        chromePrefs.put("profile.default_content_settings.popups", 0);
+        chromePrefs.put("download.default_directory", downloadFilepath);
+        chromePrefs.put("download.prompt_for_download", false);
+        chromePrefs.put("download.directory_upgrade", true);
+        chromePrefs.put("safebrowsing.enabled", true);
 
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("prefs", chromePrefs);
+
+        Configuration.browserCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
+
+        // Ваш тестовый код
         open("https://new.a-trast.ru");
         $(By.xpath(".//div[contains(text(),'Вход')]")).click();
         $(By.xpath("//div[contains(@class,'login-form')]")).$(By.name("USER_LOGIN")).setValue("bayduganova");
@@ -59,8 +49,8 @@ public class TestTrast {
         // Делаем паузу для ожидания открытия новой вкладки
         sleep(10000); // Увеличьте время, если это необходимо
 
-        // Находим последний загруженный файл в папке build/downloads
-        Path downloadsPath = Paths.get("build/downloads");
+        // Проверка файла
+        Path downloadsPath = Paths.get(downloadFilepath);
         Optional<Path> latestFile;
 
         try (Stream<Path> paths = Files.walk(downloadsPath)) {
@@ -74,7 +64,7 @@ public class TestTrast {
             throw new IOException("Файл не был найден в папке загрузок.");
         }
 
-        // Проверяем наличие изображений в скачанном файле
+        // Проверка наличия изображений в скачанном файле
         try (FileInputStream fis = new FileInputStream(latestFile.get().toFile());
              XWPFDocument document = new XWPFDocument(fis)) {
 
