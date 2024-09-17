@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -26,6 +27,16 @@ public class TestTrast {
         Configuration.browserSize = "1920x1080";
         Configuration.downloadsFolder = "build/downloads"; // Установите путь загрузки
 
+        Configuration.browserCapabilities = new org.openqa.selenium.chrome.ChromeOptions() {{
+            addArguments("--no-sandbox");
+            addArguments("--disable-dev-shm-usage");
+            setExperimentalOption("prefs", new HashMap<String, Object>() {{
+                put("download.default_directory", "absolute/path/to/build/downloads"); // Прокладываем к вашему пути.
+                put("download.prompt_for_download", false);
+                put("download.directory_upgrade", true);
+                put("safebrowsing.enabled", true);
+            }});
+        }};
     }
 
     @Test
