@@ -6,21 +6,30 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
 
-    int result;
-    private int getResult() {
-        return 3;
-    }
-    static {
+    Map<String, Object> selenoidOptions = Map.of("enableVNC", true,
+            "enableLog", true,
+            "enableVideo", true);
+
+    {
         // Установка конфигурации Selenide для подключения к Selenoid
         Configuration.remote = "http://147.45.153.130:4444/wd/hub"; // Обратите внимание на http://
         Configuration.browser = "chrome"; // Укажите нужный браузер
         Configuration.browserSize = "1920x1080"; // Размер окна браузера
 
+        // Установка selenoid options для Selenide
+        Configuration.browserCapabilities.setCapability("selenoid:options", selenoidOptions);
+    }
+
+    private int getResult() {
+        return 3;
     }
 
     @Test
@@ -46,7 +55,7 @@ public class TestTrast {
     void secondTest() {
         int result = getResult();
         System.out.println("###      secondTest()");
-        Assertions.assertTrue(result> 2);
+        Assertions.assertTrue(result > 2);
     }
 
     @AfterEach
