@@ -1,16 +1,19 @@
 package ru.newatrast.test;
+
 import com.codeborne.selenide.Configuration;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeOptions;
-import java.util.Comparator;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -19,30 +22,34 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
     static {
+        // Настройки ChromeOptions
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.setExperimentalOption("prefs", new HashMap<String, Object>() {{
+            put("profile.default_content_settings.popups", 0);
+            put("download.default_directory", "/home/selenium/Downloads");
+            put("download.prompt_for_download", false);
+            put("download.directory_upgrade", true);
+            put("safebrowsing.enabled", false);
+            put("plugins.always_open_pdf_externally", true);
+            put("plugins.plugins_disabled", new ArrayList<String>() {{
+                add("Chrome PDF Viewer");
+            }});
+        }});
+
         // Установка конфигурации Selenide для подключения к Selenoid
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+
         Configuration.remote = "http://147.45.153.130:4444/wd/hub";
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
+        Configuration.browserCapabilities = capabilities; // Устанавливаем кастомные возможности
     }
+
+    private final String downloadFilepath = "/home/selenium/Downloads"; // Путь к папке загрузок
 
     @Test
     public void test() throws IOException {
-
-        // Настройки для автоматического скачивания
-        String downloadFilepath = "/root/downloads";
-        HashMap<String, Object> chromePrefs = new HashMap<>();
-        chromePrefs.put("profile.default_content_settings.popups", 0);
-        chromePrefs.put("download.default_directory", downloadFilepath);
-        chromePrefs.put("download.prompt_for_download", false);
-        chromePrefs.put("download.directory_upgrade", true);
-        chromePrefs.put("safebrowsing.enabled", true);
-
-        ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", chromePrefs);
-
-        Configuration.browserCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
-
-        // Ваш тестовый код
         open("https://new.a-trast.ru");
         $(By.xpath(".//div[contains(text(),'Вход')]")).click();
         $(By.xpath("//div[contains(@class,'login-form')]")).$(By.name("USER_LOGIN")).setValue("bayduganova");
@@ -52,8 +59,6 @@ public class TestTrast {
 
         // Клик по элементу для скачивания
         $("span[data-tooltip='Скачать акт']").click();
-
-        // Делаем паузу для ожидания открытия новой вкладки
         sleep(10000); // Увеличьте время, если это необходимо
 
         // Проверка файла
