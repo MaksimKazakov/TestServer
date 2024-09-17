@@ -24,6 +24,8 @@ public class TestTrast {
         Configuration.remote = "http://147.45.153.130:4444/wd/hub";
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
+        Configuration.downloadsFolder = "build/downloads"; // Установите путь загрузки
+
     }
 
     @Test
