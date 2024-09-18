@@ -1,7 +1,6 @@
 package ru.newatrast.test;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
@@ -13,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
@@ -35,27 +33,25 @@ public class TestTrast {
         $(By.xpath(".//button/div[text()='Войти']")).click();
         $x(".//a[@href='/user/returns']").click();
 
-        // Логируем перед попыткой найти элемент
-        System.out.println("Пробуем найти элемент для скачивания...");
-        SelenideElement downloadElement = $("span[data-tooltip='Скачать акт']").shouldBe(visible);
-        System.out.println("Элемент найден.");
+        // Предположим, что ссылка на файл генерируется динамически
+        // Вы должны заменить этот URL на динамический, если он меняется
+        String downloadUrl = "https://new.a-trast.ru/user/get-download-statement/28421";
 
-        // Извлечение statementId из ссылки или атрибутов
-        String statementId = downloadElement.getAttribute("data-id"); // Замените на реальный атрибут, содержащий statementId
-        if (statementId == null || statementId.isEmpty()) {
-            throw new IllegalArgumentException("Не удалось извлечь statementId.");
-        }
+        // Формирование имени файла из URL
+        String expectedFileName = "a-trast_ru_statement_28421.docx";
+        Path downloadedFile = Paths.get("build/downloads/" + expectedFileName);
 
-        // Формирование полного URL для скачивания
-        String baseUrl = "https://new.a-trast.ru";
-        String downloadUrl = baseUrl + "/user/get-download-statement/" + statementId;
-        System.out.println("Ссылка на файл для скачивания: " + downloadUrl);
-
-        // Попробуем скачать файл
+        // Скачивание файла
         try (InputStream in = new URL(downloadUrl).openStream()) {
-            Path downloadedFile = Paths.get("build/downloads/акт.docx"); // Укажи имя файла
             Files.copy(in, downloadedFile, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Файл скачан по пути: " + downloadedFile.toString());
+        }
+
+        // Проверка, что файл скачан
+        if (Files.exists(downloadedFile)) {
+            System.out.println("Файл успешно скачан.");
+        } else {
+            throw new IOException("Файл не был найден в папке загрузок.");
         }
     }
 }
