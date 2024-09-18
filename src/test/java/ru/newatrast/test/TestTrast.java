@@ -1,12 +1,14 @@
 package ru.newatrast.test;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
@@ -28,10 +30,13 @@ public class TestTrast {
         $(By.xpath(".//button/div[text()='Войти']")).click();
         $x(".//a[@href='/user/returns']").click();
 
-        // Клик по элементу для скачивания и ожидание загрузки файла
-        Path downloadedFile = $("span[data-tooltip='Скачать акт']").download().toPath(); // Это автоматическое ожидание завершения загрузки
+        // Логируем перед попыткой найти элемент
+        System.out.println("Пробуем найти элемент для скачивания...");
+        SelenideElement downloadElement = $("span[data-tooltip='Скачать акт']").shouldBe(visible);
+        System.out.println("Элемент найден, пытаемся скачать файл...");
 
-        // Проверка пути файла
+        // Клик по элементу для скачивания и ожидание загрузки файла
+        Path downloadedFile = downloadElement.download().toPath();
         System.out.println("Файл скачан по пути: " + downloadedFile.toString());
     }
 }
