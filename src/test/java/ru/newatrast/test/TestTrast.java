@@ -40,8 +40,8 @@ public class TestTrast {
         Configuration.browserSize = "1920x1080";
         Configuration.browserCapabilities = capabilities;
     }
-
-    private final String downloadFilepath = "/home/selenium/Downloads";
+//
+   private final String downloadFilepath = "/home/selenium/Downloads";
 
     @Test
     public void test() throws IOException {
@@ -54,7 +54,7 @@ public class TestTrast {
         $("span[data-tooltip='Скачать акт']").click();
 
         // Ожидание загрузки
-        sleep(10000); // Увеличьте время, если это необходимо
+        sleep(20000); // Увеличьте время, если это необходимо
 
         // Проверка файла
         Path downloadsPath = Paths.get(downloadFilepath);
