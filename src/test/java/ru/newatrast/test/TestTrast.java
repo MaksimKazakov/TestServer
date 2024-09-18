@@ -54,7 +54,7 @@ public class TestTrast {
         $("span[data-tooltip='Скачать акт']").click();
 
         // Ожидание загрузки
-        sleep(20000); // Увеличьте время, если это необходимо
+        sleep(60000); // Увеличьте время, если это необходимо
 
         // Проверка файла
         Path downloadsPath = Paths.get(downloadFilepath);
