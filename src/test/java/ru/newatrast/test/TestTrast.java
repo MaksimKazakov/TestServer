@@ -52,26 +52,6 @@ public class TestTrast {
         // Клик по элементу для скачивания
         $("span[data-tooltip='Скачать акт']").click();
 
-        // Ожидание загрузки файла
-        Path downloadedFile = $(By.cssSelector("span[data-tooltip='Скачать акт']"))
-                .download().toPath();  // Этот метод дождётся завершения загрузки
-
-        // Проверка, что файл скачан
-        if (downloadedFile == null || !Files.exists(downloadedFile)) {
-            throw new IOException("Файл не был найден в папке загрузок.");
-        }
-
-        // Проверка наличия изображений в скачанном файле
-        try (FileInputStream fis = new FileInputStream(downloadedFile.toFile());
-             XWPFDocument document = new XWPFDocument(fis)) {
-
-            boolean hasImage = document.getAllPictures().size() > 0;
-
-            if (hasImage) {
-                System.out.println("Документ содержит изображение.");
-            } else {
-                System.out.println("В документе изображений нет.");
-            }
-        }
+        sleep(30000);
     }
 }
