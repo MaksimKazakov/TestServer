@@ -19,10 +19,18 @@ import java.util.stream.Stream;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestTrast {
+    static {
+        // Установка конфигурации Selenide для подключения к Selenoid
+        Configuration.remote = "http://147.45.153.130:4444/wd/hub";
+        Configuration.browser = "chrome";
+        Configuration.browserSize = "1920x1080";
+        Configuration.downloadsFolder = "build/downloads"; // Установите путь загрузки
+    }
 
     @Test
     public void test() throws IOException {
-        String downloadFilepath = "/root/downloads";
+
+            String downloadFilepath = "/root/downloads";
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("profile.default_content_settings.popups", 0);
         chromePrefs.put("download.default_directory", downloadFilepath);
