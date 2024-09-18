@@ -6,7 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
@@ -33,10 +38,20 @@ public class TestTrast {
         // Логируем перед попыткой найти элемент
         System.out.println("Пробуем найти элемент для скачивания...");
         SelenideElement downloadElement = $("span[data-tooltip='Скачать акт']").shouldBe(visible);
-        System.out.println("Элемент найден, пытаемся скачать файл...");
+        System.out.println("Элемент найден, пытаемся получить ссылку на файл...");
 
-        // Клик по элементу для скачивания и ожидание загрузки файла
-        Path downloadedFile = downloadElement.download().toPath();
-        System.out.println("Файл скачан по пути: " + downloadedFile.toString());
+        // Получаем ссылку на файл
+        String downloadLink = downloadElement.getAttribute("href");
+        System.out.println("Ссылка на файл для скачивания: " + downloadLink);
+
+        if (downloadLink != null && !downloadLink.isEmpty()) {
+            // Загружаем файл через прямой HTTP-запрос
+            InputStream in = new URL(downloadLink).openStream();
+            Path downloadedFile = Paths.get("build/downloads/акт.docx"); // Укажи имя файла
+            Files.copy(in, downloadedFile, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Файл скачан по пути: " + downloadedFile.toString());
+        } else {
+            throw new IllegalArgumentException("Элемент для скачивания не содержит ссылки.");
+        }
     }
 }
