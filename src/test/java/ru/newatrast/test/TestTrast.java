@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,18 +34,25 @@ public class TestTrast {
         $(By.xpath(".//button/div[text()='Войти']")).click();
         $x(".//a[@href='/user/returns']").click();
 
-        // Предположим, что ссылка на файл генерируется динамически
-        // Вы должны заменить этот URL на динамический, если он меняется
+        // Ссылка на скачивание
         String downloadUrl = "https://new.a-trast.ru/user/get-download-statement/28421";
-
-        // Формирование имени файла из URL
         String expectedFileName = "a-trast_ru_statement_28421.docx";
-        Path downloadedFile = Paths.get("build/downloads/" + expectedFileName);
+        Path downloadsPath = Paths.get("build/downloads");
+
+        // Убедитесь, что папка для загрузок существует
+        if (!Files.exists(downloadsPath)) {
+            Files.createDirectories(downloadsPath);
+        }
+
+        Path downloadedFile = downloadsPath.resolve(expectedFileName);
 
         // Скачивание файла
         try (InputStream in = new URL(downloadUrl).openStream()) {
             Files.copy(in, downloadedFile, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Файл скачан по пути: " + downloadedFile.toString());
+        } catch (IOException e) {
+            System.err.println("Ошибка при скачивании файла: " + e.getMessage());
+            e.printStackTrace();
         }
 
         // Проверка, что файл скачан
