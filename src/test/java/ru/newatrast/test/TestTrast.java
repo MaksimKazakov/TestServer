@@ -38,20 +38,24 @@ public class TestTrast {
         // Логируем перед попыткой найти элемент
         System.out.println("Пробуем найти элемент для скачивания...");
         SelenideElement downloadElement = $("span[data-tooltip='Скачать акт']").shouldBe(visible);
-        System.out.println("Элемент найден, пытаемся получить ссылку на файл...");
+        System.out.println("Элемент найден.");
 
-        // Получаем ссылку на файл
-        String downloadLink = downloadElement.getAttribute("href");
-        System.out.println("Ссылка на файл для скачивания: " + downloadLink);
+        // Извлечение statementId из ссылки или атрибутов
+        String statementId = downloadElement.getAttribute("data-id"); // Замените на реальный атрибут, содержащий statementId
+        if (statementId == null || statementId.isEmpty()) {
+            throw new IllegalArgumentException("Не удалось извлечь statementId.");
+        }
 
-        if (downloadLink != null && !downloadLink.isEmpty()) {
-            // Загружаем файл через прямой HTTP-запрос
-            InputStream in = new URL(downloadLink).openStream();
+        // Формирование полного URL для скачивания
+        String baseUrl = "https://new.a-trast.ru";
+        String downloadUrl = baseUrl + "/user/get-download-statement/" + statementId;
+        System.out.println("Ссылка на файл для скачивания: " + downloadUrl);
+
+        // Попробуем скачать файл
+        try (InputStream in = new URL(downloadUrl).openStream()) {
             Path downloadedFile = Paths.get("build/downloads/акт.docx"); // Укажи имя файла
             Files.copy(in, downloadedFile, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Файл скачан по пути: " + downloadedFile.toString());
-        } else {
-            throw new IllegalArgumentException("Элемент для скачивания не содержит ссылки.");
         }
     }
 }
